@@ -11,6 +11,12 @@ boot:
     mov [BOOT_DRIVE], dl
     mov bp, 0x8000      ; move stack out of the way
 
+; enable A20 line
+enable_a20:
+    in al, 0x92
+    or al, 0x02
+    out 0x92, al
+
     mov bx, UCZ_OS_NAME
     call print_string
     call print_newline
