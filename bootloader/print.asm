@@ -47,40 +47,40 @@ print_newline:
 ; prints a hex number
 ; input:
 ;   bx - number to print
-print_hex:
-    pusha           ; push all register values to stack
-    ; print '0x' first
-    mov al, '0' 
-    call print_char
-    mov al, 'x'
-    call print_char
-
-    mov cx, 4       ; print 4 times single char [0-9a-f]
-
-.loop:
-    ; get 4 highest bits of bx
-    mov al, bh
-    shr al, 4
-
-    ; if number in al to print < 10:
-    ;   jump to .print_char
-    cmp al, 0xa
-    jl .print_char
-
-    ; .print_char will add '0' to obtain ascii value
-    ; so '0' needs to be removed
-    ; also, al is greater or equal than 10, hence subtract 10
-    ; to obtain correct ascii value
-    add al, 'a' - 0xa - '0'
-
-.print_char:
-    add al, '0'     ; get ascii value of char in al
-    call print_char
-
-    ; shift by 4 bits to left to remove the 4 highest bits
-    shl bx, 4
-    loop .loop
-
-.finish:
-    popa            ; restore original register values
-    ret             ; return
+; print_hex:
+;     pusha           ; push all register values to stack
+;     ; print '0x' first
+;     mov al, '0' 
+;     call print_char
+;     mov al, 'x'
+;     call print_char
+; 
+;     mov cx, 4       ; print 4 times single char [0-9a-f]
+; 
+; .loop:
+;     ; get 4 highest bits of bx
+;     mov al, bh
+;     shr al, 4
+; 
+;     ; if number in al to print < 10:
+;     ;   jump to .print_char
+;     cmp al, 0xa
+;     jl .print_char
+; 
+;     ; .print_char will add '0' to obtain ascii value
+;     ; so '0' needs to be removed
+;     ; also, al is greater or equal than 10, hence subtract 10
+;     ; to obtain correct ascii value
+;     add al, 'a' - 0xa - '0'
+; 
+; .print_char:
+;     add al, '0'     ; get ascii value of char in al
+;     call print_char
+; 
+;     ; shift by 4 bits to left to remove the 4 highest bits
+;     shl bx, 4
+;     loop .loop
+; 
+; .finish:
+;     popa            ; restore original register values
+;     ret             ; return

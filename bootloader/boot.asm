@@ -1,14 +1,10 @@
 ;
 ; A simple bootloader
 ;
-[org 0x7c00]            ; BIOS will load bootloader at 0x7c00
-KERNEL_OFFSET equ 0x1000
+; [org 0x7c00]            ; BIOS will load bootloader at 0x7c00
 
 [bits 16]
 boot:
-    ; BIOS stores boot drive in dl
-    ; store this for later
-    mov [BOOT_DRIVE], dl
     mov bp, 0x8000      ; move stack out of the way
 
 ; enable A20 line
@@ -21,17 +17,8 @@ enable_a20:
     call print_string
     call print_newline
 
-load_kernel:
-    ; setup parameters for disk load routine
-    ; load first 15 sectors
-    mov bx, KERNEL_OFFSET
-    mov dh, 15
-    mov dl, [BOOT_DRIVE]
-    call disk_load
-
 ; switch to protected mode
 switch_to_pm: 
-
     cli                 ; switch off interrupts
     lgdt [gdt_desc]     ; load global descriptor table
 
@@ -46,6 +33,7 @@ switch_to_pm:
     jmp CODE_SEG:init_pm
 
 [bits 32]
+[extern boot_main]
 init_pm:
 
     ; in protected mode old segments are meaningless
@@ -61,18 +49,21 @@ init_pm:
     mov ebp, 0x9000
     mov esp, ebp
 
-    ; jump to the address of loaded kernel
-    call KERNEL_OFFSET
+    call load_kernel
+
+    mov ebx, [BOOT_MAIN_ERROR]
+    call print_string_pm
 
 jmp $
 
 %include "print.asm"
-%include "disk_load.asm"
+%include "print_string_pm.asm"
 %include "gdt.asm"
+%include "load_kernel.asm"
 
 
-UCZ_OS_NAME db "uczOS loader"
-BOOT_DRIVE  db 0
+UCZ_OS_NAME db "uczOS loader", 0
+BOOT_MAIN_ERROR db "boot main error", 0
 
 ; Bootsector padding
 times 510-($-$$) db 0
