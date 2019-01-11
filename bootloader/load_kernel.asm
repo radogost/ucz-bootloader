@@ -104,12 +104,8 @@ read_bytes:
     mov eax, ebx
     add eax, ecx
 
-    ; the offset might not be a multiple a sector size,
-    ; so when a sector is read, the read data will not start
-    ; from the offset but before. Hence, the start
-    ; of the physical destination address has to be adjusted
-    ; physical_address -= offset % 512 // 512 bytes is size of a sector
-    ; which is: physical_address &= ~(512-1)
+    ; round down to sector boundary
+    ; start_address &= ~(sector_size - 1)
     and ebx, ~0x1ff
 
     ; so the sector where the data starts is:
