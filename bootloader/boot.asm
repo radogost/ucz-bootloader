@@ -14,8 +14,8 @@ enable_a20:
     out 0x92, al
 
     mov bx, UCZ_OS_NAME
-    call print_string
-    call print_newline
+    call print_string_rm
+    call print_newline_rm
 
 ; switch to protected mode
 switch_to_pm: 
@@ -48,7 +48,7 @@ init_pm:
     ; update stack position
     mov ebp, 0x9000
     mov esp, ebp
-
+    
     call load_kernel
 
     mov ebx, [BOOT_MAIN_ERROR]
@@ -56,8 +56,8 @@ init_pm:
 
 jmp $
 
-%include "print.asm"
-%include "print_string_pm.asm"
+%include "print_rm.asm"
+%include "print_pm.asm"
 %include "gdt.asm"
 %include "load_kernel.asm"
 
