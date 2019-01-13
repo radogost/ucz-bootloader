@@ -1,9 +1,14 @@
 ;
 ; A simple bootloader
 ;
-; [org 0x7c00]            ; BIOS will load bootloader at 0x7c00
-
 [bits 16]
+
+section .text
+
+global _start
+
+_start:
+
 boot:
     mov bp, 0x8000      ; move stack out of the way
 
